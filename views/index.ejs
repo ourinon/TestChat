@@ -1,0 +1,527 @@
+﻿<%
+    let chatRoomName = "roomname";
+    let chatNickName = nickname;
+    let chatToken = token;
+    <!-- let usertype = usertype; -->
+%>
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>상담채팅</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/nanumgothic.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        
+
+</head>
+<%if (usertype == 0){%>
+
+<script>
+    function openerAction(){
+        opener.location.href = '<%=reurl%>'
+    }        
+</script>
+
+<body onBeforeUnload="openerAction()">
+<%}else{%>
+<body>
+<%}%>
+    <!-- 채팅 참여자 레이어 -->
+    <section id="tmLayerMemberList">
+        <div class="tmHead">
+            <h3>채팅 참여자</h3>
+            <button type="button" class="tmBtnCloseLayer"><span class="hidden">닫기</span></button>
+        </div>
+        <div class="tmBody">
+            <div class="scroll-pane">
+                <ul class="tmFormCheckbox" id="chkUserList"></ul>
+            </div>
+
+            <div class="tmInnerBtnArea" id="adminBlocking">
+            </div>
+        </div>
+    </section>
+
+    <!-- 채팅 레이어 -->
+    <section id="tmLayerChat">
+
+
+        <div class="tmHead">
+            <h2 class="logo">상담채팅<!--<a href="http://localhost:3000" class="hidden" target="_blank">Dongle</a>--></h2>
+        </div>
+
+
+        <div class="tmBody">
+            <!--[if lte IE 8 ]>
+            <div id="tmUpdateIE">
+                <p>Internet Explorer Update 안내 - Internet Explorer 10이상에서 원할한 서비스 이용이 가능합니다. Internet Explorer를 업데이트 해주세요. <a href="http://www.microsoft.com/ko-kr/download/internet-explorer-10-details.aspx" target="_blank" class="tmBtnUpdateLink">UPDATE</a></p>
+                <a href="#" id="tmBtnCloseUpdateIE">닫기</a>
+            </div>
+            <![endif]-->
+            <div id="tmPopWrap">
+                <h2>대화명 설정</h2>
+                <ul class="tmFormRadio">
+                    <!-- <li><button type="button">회원 ID 사용</button></li> -->
+                    <li class="active">
+                        <button type="button">대화명</button>
+                        <div>
+                            <div class="form">
+                                <p>
+                                    <input type="text" class="tmFormInputText" id="tmInputName" value="<%=chatNickName%>" maxlength="12" />
+                                </p>
+                                <div class="tmBtnArea tmBtnLogin">
+                                    <button type="button" id="tmBtnConfirmName">입장</button>
+                                </div>
+                            </div>
+                            <p class="tmText">한글 1~6자, 영문 대소문자, 숫자 2~12자를 사용할 수 있습니다. (혼용가능)</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="tmInfoBar">
+                <!-- <button type="button" id="tmBtnMemberList" title="채팅 참여자"><span class="icon_person"></span><strong id="tmChatTotalCnt"></strong><span class="txt_personCount">명</span></button> -->
+                <!-- <button type="button" id="tmBtnHistory" onclick="fnHistory();" title="채팅이력보기"><span class="icon_history hidden">채팅이력보기</span></button> -->
+                <!-- <button type="button" id="tmBtnFile" onclick="fnFileUpload();" title="파일첨부"><span class="icon_file hidden">파일첨부</span></button> -->
+                <button type="button" id="tmBtnPreference" title="환경설정"><span class="icon_preference hidden">환경설정</span></button>
+                <button type="button" id="tmBtnCloseChat" title="채팅방 나가기"><span class="icon_quit hidden">나가기</span></button>
+            </div>
+
+            <div id="tmNotification">
+                <!-- <h1 id="lblRoomName"><%=chatRoomName%></h1> -->
+                <!-- <button type="button" id="tmBtnCloseNotification" class="hidden tmBtnOpen">닫기</button> -->
+            </div>
+
+            <div id="tmMessageList">
+                <div class="tmInner scroll-pane">
+                </div>
+            </div>
+
+            <div id="tmMessageForm">
+                <div id="tmInputMessageWrap">
+                    <textarea id="tmInputMessage" disabled></textarea>
+                </div>
+                <div id="tmSendMessageWrap">
+                    <button type="button" id="tmSendMessage" class="hidden" disabled>전송</button>
+                </div>
+            </div>
+
+            <div id="tmCopyright">
+                <p>한국여성인권진흥원</p>
+            </div>
+
+            <div class="tmBtnArea" style="display: none">
+                <button type="button" id="tmBtnJoinChat"><span class="icon_join">대화참여하기</span></button>
+            </div>
+        </div>
+
+        <div id="tmLayerMask"></div>
+
+    </section>
+
+    <!-- 설정 레이어 -->
+    <section id="tmLayerPreference">
+        <div class="tmHead">
+            <h3>환경설정</h3>
+            <button type="button" class="tmBtnCloseLayer"><span class="hidden">닫기</span></button>
+        </div>
+        <div class="tmBody">
+            <div class="tmListView">
+                <button type="button" data-target="chat">
+                    <span class="icon_preference_chat"></span>
+                    <span class="text">종료 5분 연장</span>
+                    <span class="icon_next"></span>
+                </button>
+                <button type="button" data-target="save">
+                    <span class="icon_preference_save"></span>
+                    <span class="text">저장설정</span>
+                    <span class="icon_next"></span>
+                </button>
+                <!-- <button type="button" data-target="manager">
+                    <span class="icon_preference_manager"></span>
+                    <span class="text">방장설정</span>
+                    <span class="icon_next"></span>
+                </button> -->
+            </div>
+        </div>
+    </section>
+    <section id="tmLayerPreferenceChat" class="active" data-view="chat" style="display: none;">
+        <div class="tmHead">
+            <button type="button" class="tmBtnPrevLayer"><span class="hidden">이전</span></button>
+            <h3>채팅 설정</h3>
+            <button type="button" class="tmBtnCloseLayer"><span class="hidden">닫기</span></button>
+        </div>
+        <div class="tmBody">
+            <div class="tmSub">
+                <h4 class="tmSubHead">종료 5분 연장</h4>
+                <div class="tmSubBody">
+                    <ul class="tmFormRadio" id="timeinfo">
+                        <li class="active">
+                            <button type="button">시작 일시</button>
+                            <div class="tmInputBox" id="start_date"><%=moment(createdAt).format('YYYY.MM.DD HH:mm')%></div>
+                            <br>
+                            <button type="button">종료 예정 일시</button>
+                            <div class="tmInputBox" id="auto_closed_date"><%=moment(autoclosedAt).format('YYYY.MM.DD HH:mm')%></div>
+                            <br>
+                            <hr>
+                            <p class="tmText">상담시간은 30분으로 차감되어 카운팅되며 5분씩 연장가능하나, 5분간 입력하지 않을 경우 상담이 종료됩니다.</p>
+                        </li>
+                    </ul>
+                    <div class="tmBtnArea">
+                        <button type="button" onclick="fn_SetTimeAdd('<%=roomid%>');"><span class="icon_save"></span> 5분 추가</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+<!-- 
+    <section id="tmLayerPreferenceChat" class="active" data-view="chat" style="display: none;">
+        <div class="tmHead">
+            <button type="button" class="tmBtnPrevLayer"><span class="hidden">이전</span></button>
+            <h3>채팅 설정</h3>
+            <button type="button" class="tmBtnCloseLayer"><span class="hidden">닫기</span></button>
+        </div>
+        <div class="tmBody">
+            <div class="tmSub">
+                <h4 class="tmSubHead">대화명 설정</h4>
+                <div class="tmSubBody">
+                    <ul class="tmFormRadio">
+                        <li class="active">
+                            <button type="button">대화명</button>
+                            <div class="tmInputBox">
+                                <input type="text" id="tmPreferenceUserName" class="tmFormInputText" value="<%=chatNickName%>" disabled />
+                                <input type="hidden" id="txtOldName" value="<%=chatNickName%>" />
+                            </div>
+                            <p class="tmText">한글 1~6자, 영문 대소문자, 숫자 2~12자를 사용할 수 있습니다. (혼용가능)</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tmSub">
+                <h4 class="tmSubHead">폰트 설정</h4>
+                <div class="tmSubBody">
+                    <ul class="tmListStyle">
+                        <li>
+                            <strong>폰트</strong>
+                            <div class="tmFormSelect">
+                                <button type="button">
+                                    <span class="tmSelectText">돋움</span>
+                                    <span class="tmSelectBullet"></span>
+                                </button>
+                                <ul>
+                                    <li data-value="tmFontFamily1">돋움</li>
+                                    <li data-value="tmFontFamily2">굴림</li>
+                                    <li data-value="tmFontFamily3">맑은고딕</li>
+                                    <li data-value="tmFontFamily4">나눔고딕</li>
+                                </ul>
+                                <select style="display: none" id="tmSelectFontFamily">
+                                    <option value="tmFontFamily1" selected>돋움</option>
+                                    <option value="tmFontFamily2">굴림</option>
+                                    <option value="tmFontFamily3">맑은고딕</option>
+                                    <option value="tmFontFamily4">나눔고딕</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>크기</strong>
+                            <div class="tmFormSelect">
+                                <button type="button">
+                                    <span class="tmSelectText">보통</span>
+                                    <span class="tmSelectBullet"></span>
+                                </button>
+                                <ul>
+                                    <li data-value="tmFontSize1">8</li>
+                                    <li data-value="tmFontSize2">9</li>
+                                    <li data-value="tmFontSize3">10</li>
+                                    <li data-value="tmFontSize4">11</li>
+                                    <li data-value="tmFontSize5">12</li>
+                                    <li data-value="tmFontSize6">14</li>
+                                    <li data-value="tmFontSize7">16</li>
+                                    <li data-value="tmFontSize8">18</li>
+                                    <li data-value="tmFontSize9">20</li>
+                                    <li data-value="tmFontSize10">24</li>
+                                </ul>
+                                <select style="display: none" id="tmSelectFontSize">
+                                    <option value="tmFontSize1">8</option>
+                                    <option value="tmFontSize2" selected>9</option>
+                                    <option value="tmFontSize3">10</option>
+                                    <option value="tmFontSize4">11</option>
+                                    <option value="tmFontSize5">12</option>
+                                    <option value="tmFontSize6">14</option>
+                                    <option value="tmFontSize7">16</option>
+                                    <option value="tmFontSize8">18</option>
+                                    <option value="tmFontSize9">20</option>
+                                    <option value="tmFontSize10">24</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>속성</strong>
+                            <div class="tmFormSelect">
+                                <button type="button">
+                                    <span class="tmSelectText">보통</span>
+                                    <span class="tmSelectBullet"></span>
+                                </button>
+                                <ul>
+                                    <li data-value="tmFontStyle1">보통</li>
+                                    <li data-value="tmFontStyle2">볼드</li>
+                                    <li data-value="tmFontStyle3">이탤릭</li>
+                                </ul>
+                                <select style="display: none" id="tmSelectFontStyle">
+                                    <option value="tmFontStyle1" selected>보통</option>
+                                    <option value="tmFontStyle2">볼드</option>
+                                    <option value="tmFontStyle3">이탤릭</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>색상</strong>
+                            <div class="tmColorBar">
+                                <ul class="tmPickColor">
+                                    <li>
+                                        <button type="button" value="tmFontColor1"
+                                            class="tmBtnColorPicker1"><span><span>#ff0000</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor2"
+                                            class="tmBtnColorPicker2"><span><span>#ffef00</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor3"
+                                            class="tmBtnColorPicker3"><span><span>#65c624</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor4"
+                                            class="tmBtnColorPicker4"><span><span>#00b0a2</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor5"
+                                            class="tmBtnColorPicker5"><span><span>#0075c8</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor6"
+                                            class="tmBtnColorPicker6"><span><span>#3a32c3</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor7"
+                                            class="tmBtnColorPicker7"><span><span>#7820b9</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor8"
+                                            class="tmBtnColorPicker8"><span><span>#000000</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor9"
+                                            class="tmBtnColorPicker9"><span><span>#636363</span></span></button></li>
+                                    <li>
+                                        <button type="button" value="tmFontColor10"
+                                            class="tmBtnColorPicker10"><span><span>#ffffff</span></span></button></li>
+                                </ul>
+                                <select style="display: none" id="tmSelectFontColor">
+                                    <option value="tmFontColor1">#ff0000</option>
+                                    <option value="tmFontColor2">#ff6c00</option>
+                                    <option value="tmFontColor3">#ffef00</option>
+                                    <option value="tmFontColor4">#65c624</option>
+                                    <option value="tmFontColor5">#00b0a2</option>
+                                    <option value="tmFontColor6">#0075c8</option>
+                                    <option value="tmFontColor7">#3a32c3</option>
+                                    <option value="tmFontColor8">#7820b9</option>
+                                    <option value="tmFontColor9" selected>#000000</option>
+                                    <option value="tmFontColor10">#636363</option>
+                                    <option value="tmFontColor11">#aaaaaa</option>
+                                    <option value="tmFontColor12">#ffffff</option>
+                                </select>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="tmBtnArea">
+                        <button type="button" onclick="fn_FontConfigSave();"><span class="icon_save"></span>저장</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <section id="tmLayerPreferenceSave" data-view="save">
+        <div class="tmHead">
+            <button type="button" class="tmBtnPrevLayer"><span class="hidden">이전</span></button>
+            <h3>저장설정</h3>
+            <button type="button" class="tmBtnCloseLayer"><span class="hidden">닫기</span></button>
+        </div>
+        <div class="tmBody">
+            <div class="tmSub">
+                <h4 class="tmSubHead">대화내용 파일로 저장</h4>
+                <div class="tmSubBody">
+                    <div class="tmBtnArea tmBtnLogin">
+                        <button type="button" id="tmBtnSaveFile" onclick="fn_FileDownload();">파일로 저장</button>
+                    </div>
+
+                    <p class="tmText">대화창에 출력된 내용을 파일로 다운로드 받습니다.</p>
+                </div>
+            </div>
+            <div class="tmSub">
+                <h4 class="tmSubHead">대화내용 유지 설정</h4>
+                <div class="tmSubBody">
+                    <ul class="tmFormRadio">
+                        <li>
+                            <button type="button">저장하지 않음</button>
+                            <input type="radio" value="None" name="rdoChatConfig" checked />
+                        </li>
+                        <li>
+                            <button type="button">사용자기기에 저장</button>
+                            <input type="radio" value="Client" name="rdoChatConfig" />
+                        </li>
+                    </ul>
+                    <p class="tmText">화면을 새로고침 할때 최근 대화내용이 보여집니다.</p>
+
+                    <div class="tmBtnArea">
+                        <button type="button" onclick="fn_ChatConfigSave();"><span class="icon_save"></span>저장</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tmLayerPreferenceManager" data-view="manager">
+        <div class="tmHead">
+            <button type="button" class="tmBtnPrevLayer"><span class="hidden">이전</span></button>
+            <h3>방장설정</h3>
+            <button type="button" class="tmBtnCloseLayer"><span class="hidden">닫기</span></button>
+        </div>
+        <div class="tmBody">
+            <!-- 로그인 전 [s] -->
+            <div class="tmSub" id="adminLogin">
+                <h4 class="tmSubHead">로그인</h4>
+                <div class="tmSubBody">
+                    <fieldset>
+                        <div class="tmFieldBox">
+                            <div class="form">
+                                <label for="tmUserId">아이디</label>
+                                <p>
+                                    <input type="text" id="tmUserId" class="tmFormInputText" /></p>
+                            </div>
+                            <div class="form">
+                                <label for="tmUserPw">비밀번호</label>
+                                <p>
+                                    <input type="password" id="tmUserPw" class="tmFormInputText" /></p>
+                            </div>
+
+                            <div class="tmBtnArea tmBtnLogin">
+                                <button type="button" id="btnAdminLogin"><span>로그인</span></button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <!-- 로그인 전 [e] -->
+            <!-- 로그인 후 [s] -->
+            <!--
+            <div class="tmSub" id="adminForm">
+            </div>
+            -->
+            <!-- 로그인 후 [e] -->
+        </div>
+    </section>
+
+    <form action="/chatfiledown" method="post" name="formHistory" id="formHistory">
+        <input type="hidden" id="hidChatHistory" name="hidChatHistory" value="" />
+    </form>
+
+    <form name="formupload" id="formupload" enctype="multipart/form-data">
+        <input type="file" id="files" name="files" multiple style="visibility: hidden;" />
+    </form>
+
+    <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="/js/jquery.mousewheel.js"></script>
+    <script src="/js/jquery.jscrollpane.min.js"></script>
+    <script src="/js/ClevisURL.js"></script>
+    <script src="/js/AjaxDataHelper.js"></script>
+    <script src="/js/jquery.cookie.js"></script>
+    <script src="/js/noclickdelay.js"></script>
+
+
+    <script>
+        var chatToken = '<%=chatToken%>';
+        var groupName = '';
+        var referURL = "";
+        var chatNickName = "<%=chatNickName%>";
+        var chatUL = "";
+        var chatRooom = '';
+        var baseLogidx = 0;
+    </script>
+
+    <script src="/js/wcs.service.js"></script>
+
+    <script>
+        // $("#timeinfo").hide();
+        //파일 업로드 클릭 이벤트
+        function fnFileUpload() {
+            $("#files").click();
+        }
+
+
+        //채팅이력 조회출력
+        function fnHistory() {
+            var historyURL = "/history?token=" + chatToken + "&logidx=" + baseLogidx;
+
+            if (baseLogidx > 0) {
+                $.get(historyURL, function (response) {
+                    if (response.code == "200") {
+                        if (response.result.length > 0) {
+                            baseLogidx = response.result[0].chatLogIdx;
+                            ChatHistoryPreBind(response.result);
+                        }
+                    } else {
+                        console.log("서버 에러발생");
+                    }
+                });
+            }
+        }
+
+
+        //파일업로드 처리
+        $("#files").change(function () {
+            data = new FormData();
+            data.append("files", $("input[name=files]")[0].files[0]);
+
+            var fileName = $("#files").val();
+            fileName = fileName.slice(fileName.indexOf(".") + 1).toLowerCase();
+
+            if (fileName != "jpg" && fileName != "png" && fileName != "gif" && fileName != "bmp") {
+                alert("이미지 파일은 (jpg, png, gif, bmp) 형식만 등록 가능합니다.");
+                $("#files").val("");
+                return false;
+            } else {
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    url: '/uploadfile',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        //console.log(response);
+                        $("#files").val("");
+                        chat.emit("fileMsg", chatToken, response);
+                    }
+                });
+            }
+        });
+
+    </script>
+<script>
+    
+    //붙여넣기 금지 
+    $(function(){
+        $("#tmInputMessage").on("paste", function() {
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

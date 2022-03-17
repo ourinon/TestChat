@@ -1,0 +1,34 @@
+{
+  "development": {
+    "username": "root",
+    "password": "1234",
+    "database": "nodechat",
+    "host": "127.0.0.1",
+    "port": 3306,
+    "dialect": "mysql",
+    "timezone": "+09:00",
+    "operatorsAliases": "Sequelize.Op"
+  },
+  "test": {
+    "username": "root",
+    "password": "1234",
+    "database": "nodechat",
+    "host": "127.0.0.1",
+    "port": 3306,
+    "dialect": "mysql",
+    "timezone": "+09:00",
+    "operatorsAliases": "Sequelize.Op"
+ 
+  },
+  "production": {
+    "username": "root",
+    "password": "1234",
+    "database": "nodechat",
+    "host": "127.0.0.1",
+    "port": 3306,
+    "dialect": "mysql",
+    "timezone": "+09:00",
+    "operatorsAliases": "Sequelize.Op"
+
+  }
+}

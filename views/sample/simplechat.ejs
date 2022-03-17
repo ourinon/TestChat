@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="/javascripts/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/stylesheets/site.css" />
+  </head>
+  <body>
+  <form id="chatform">
+    <div class="container">
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-2">User</div>
+            <div class="col-4"><input type="text" id="userInput" /></div>
+        </div>
+        <div class="row">
+            <div class="col-2">Message</div>
+            <div class="col-4"><input type="text" id="messageInput" /></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-6">
+                <input type="submit" id="sendButton" value="Send Message" />
+            </div>
+        </div>
+    </div>
+  </form>
+  
+  <div class="row">
+      <div class="col-12">
+          <hr />
+      </div>
+  </div>
+  
+  
+  <div class="row">
+      <div class="col-6">
+          <ul id="messagesList"></ul>
+      </div>
+  </div>
+
+
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+  //소켓연결
+  var socket = io.connect();
+
+  //서버 브로드 캐스팅 메시징 수신처리
+  socket.on('message', function(nick,message) {
+    console.log('Client received message:',nick, message);
+    appendMessage(nick,message);
+  });
+
+
+  //메시징 목록에 추가하기
+  function appendMessage(nick,message){
+    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    var encodedMsg = nick + " says " + msg;
+    var li = document.createElement("li");
+    li.textContent = encodedMsg;
+    document.getElementById("messagesList").appendChild(li);
+  }
+
+  //서버 로깅 메시지 수신처리
+  socket.on('log', function(array) {
+    console.log.apply(console, array);
+  });
+
+  //전송버튼 클릭 이벤트
+  $('#chatform').submit(function(){
+    var nick = $('#userInput').val();
+    var message = $('#messageInput').val();
+    
+    sendMessage(nick,message);
+
+    $('#messageInput').val('');
+    $('#messageInput').focus();
+
+    return false;
+  });
+  
+
+  //채팅 메시징 서버 전송
+  function sendMessage(nick,message) {
+    console.log('Client sending message: ',nick, message);
+    socket.emit('message',nick, message);
+  }
+
+  $( document ).ready(function() {
+      $('#userInput').focus();
+  });
+
+
+
+  </script>
+
+  </body>
+</html>

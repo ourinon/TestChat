@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "..\\bin"
+		},
+		{
+			"path": "..\\config"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\public"
+		},
+		{
+			"path": "..\\routes"
+		},
+		{
+			"path": "..\\views"
+		}
+	]
+}

@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+
+<body>
+
+    1.테스트용 토큰 생성하기 <br />
+    <form method="post" action="/token">
+        roomid:<input type="text" name="roomid" value="test" /><br />
+        roomname:<input type="text" name="roomname" value="테스트" /><br />
+        userid:<input type="text" name="userid" value="eddy" /><br />
+        nickname:<input type="text" name="nickname" value="에디" /><br />
+        usertype:<input type="text" name="usertype" value="0" /><br />
+        targetid:<input type="text" name="targetid" value="" /><br />
+        imgurl:<input type="text" name="imgurl" value="" /><br />
+        message:<input type="text" name="message" value="샘플입니다." /><br />
+        <input type="submit" />
+
+
+    </form>
+    <br /> <br />
+
+    2.관리자용 푸시메시지 토큰 생성하기 <br />
+    <form method="post" action="/token">
+        roomid:<input type="text" name="roomid" value="test" /><br />
+        roomname:<input type="text" name="roomname" value="테스트" /><br />
+        userid:<input type="text" name="userid" value="admin" /><br />
+        nickname:<input type="text" name="nickname" value="관리자" /><br />
+        usertype:<input type="text" name="usertype" value="1" /><br />
+        targetid:<input type="text" name="targetid" value="" /><br />
+        imgurl:<input type="text" name="imgurl" value="" /><br />
+        message:<input type="text" name="message" value="푸시 메시지 내용입니다." /><br />
+        <input type="submit" />
+
+
+    </form>
+    <br /> <br />
+    3.토큰기반 채팅 페이지 호출
+    <br />
+    <a href="?token=" target="_blank">채팅페이지 열기-토큰을 붙여넣으세요.</a>
+    <br /> <br />
+
+    3.토큰기반 채팅 페이지 호출
+    <br />
+    관리자용token:<input type="text" name="admintoken" id="admintoken" style="width:100%;"
+        value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29taWQiOiJ0ZXN0Iiwicm9vbW5hbWUiOiLthYzsiqTtirgiLCJ1c2VyaWQiOiJhZG1pbiIsIm5pY2tuYW1lIjoi6rSA66as7J6QIiwidXNlcnR5cGUiOiIxIiwidGFyZ2V0aWQiOiIiLCJpbWd1cmwiOiIiLCJtZXNzYWdlIjoi7ZG47IucIOuplOyLnOyngCDrgrTsmqnsnoXri4jri6QuIiwiaWF0IjoxNTgyMTgxMzkxLCJleHAiOjE1ODMwNDUzOTEsImlzcyI6ImRvbmdsZWNoYXQifQ.qS27bKZBqpt3zdP-Kt9p3eiR3B7kDeXw-UPSANjFBbc" /><br />
+    <br />
+    <button id="btnPush" onclick="fnPushMsg();">관리자 푸시 메시지 발송</button>
+    <br />
+    <div id="pushMessage"></div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+
+    <script>
+
+        //채팅서버 소켓연결
+        var socket = io.connect('http://fc.dongledongle.com');
+        //var socket = io.connect('http://localhost:3000');
+
+        socket.on("sysMsg", function (name, message) {
+            var appendMsg = document.getElementById('pushMessage').innerHTML;
+            appendMsg = appendMsg + "<br>" + message;
+            document.getElementById('pushMessage').innerHTML = appendMsg;
+        });
+
+
+        function fnPushMsg() {
+            var token = document.getElementById('admintoken').value;
+            socket.emit('pushMsg', token);
+        }
+
+
+
+    </script>
+</body>
+
+</html>

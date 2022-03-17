@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+
+<form name="formupload" id="formupload" method="post" action="/uploadfile"  enctype="multipart/form-data">
+    <input type="file" id="files" name="files" />
+</form>
+
+
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script>
+
+      //파일 업로드 클릭 이벤트
+      function fnFileUpload() {
+        $("#files").click();
+    }
+
+          //파일업로드 처리
+          $("#files").change(function () {
+            data = new FormData();
+            data.append("files", $("input[name=files]")[0].files[0]);
+
+            var fileName = $("#files").val();
+            fileName = fileName.slice(fileName.indexOf(".") + 1).toLowerCase();
+
+            if (fileName != "jpg" && fileName != "png" && fileName != "gif" && fileName != "bmp") {
+                alert("이미지 파일은 (jpg, png, gif, bmp) 형식만 등록 가능합니다.");
+                $("#files").val("");
+                return false;
+            } else {
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    url: '/uploadfile',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response);
+                        alert(response.originalname);
+                    }
+                });
+            }
+        });
+
+</script>
+
+</body>
+</html>
